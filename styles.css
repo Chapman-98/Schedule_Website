@@ -1,71 +1,85 @@
+/* styles.css */
+
+/* Basic reset */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Overall page style */
 body 
 {
     font-family: Arial, sans-serif;
-    background-color: #f4f6f9;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    padding: 20px;
+    background-color: #f4f4f4;
 }
 
-.calendar 
+/* Title styling */
+h1 
 {
-    width: 350px;
+    text-align: center;
+}
+
+/* Container for the entire calendar */
+.calendar-container 
+{
+    position: relative;
+    max-width: 700px;
+    padding: 0px;
     background-color: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-
-.calendar-header 
-{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-}
-
-.calendar-header button 
-{
-    background-color: transparent;
-    border: none;
-    font-size: 1.5em;
-    cursor: pointer;
-}
-
-#month-year 
-{
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-.calendar-weekdays, .calendar-dates 
+  
+/* Styling the day names row */
+.day-names 
 {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 5px;
 }
-
-.calendar-weekdays div, .calendar-dates div 
+  
+.day-names div 
 {
+    background: #ddd;
     text-align: center;
-    padding: 10px;
-}
-
-.calendar-weekdays 
-{
-    background-color: #eaeef3;
-}
-
-.calendar-weekdays div 
-{
+    padding: 10px 0;
     font-weight: bold;
+    border: 1px solid #ccc;
 }
 
-.calendar-dates div 
+/* Calendar container styling */
+#calendar 
 {
-    border-bottom: 1px solid #eaeef3;
+    left: 0;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Day cell styling */
+.day 
+{
+    border: 1px solid #ccc;
+    background: #fff;
+    min-height: 80px;
+    padding: 3px;
     cursor: pointer;
+    transition: background 0.2s;
 }
 
-.calendar-dates div:hover 
+.day:hover 
 {
-    background-color: #f1f1f1;
+    background: #e6e6e6;
+}
+
+.day strong 
+{
+    display: block;
+    margin-bottom: 5px;
+}
+
+.assignment
+{
+    font-size: 0.9em;
 }
