@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () =>
     }
    
     
-    
+
     // Get the number of days in the month
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
@@ -34,9 +34,10 @@ document.addEventListener('DOMContentLoaded', () =>
         const dayCell = document.createElement('div');
         dayCell.classList.add('day');
   
-        // Only fill in the cells that represent actual days of the month.
+        // Check if we have started the current month
         if(i >= firstDayOfMonth) 
         {
+            // Fill in the cells that represent actual days of the month.
             if(i < firstDayOfMonth + daysInMonth)
             {
                 dayNumber = i - firstDayOfMonth + 1;
@@ -75,8 +76,10 @@ document.addEventListener('DOMContentLoaded', () =>
                 // Append the prompt to the document body
                 document.body.appendChild(promptDiv);
 
+                // Check when confirm has been selected
                 promptDiv.querySelector('#confirmSelection').addEventListener('click', () => 
                 {
+                    // Check that an option was selected
                     const selectedInput = promptDiv.querySelector('input[name="choice"]:checked');
                     if (!selectedInput) 
                     {
@@ -85,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () =>
                     }
                     const selectedChoice = selectedInput.value;
                     
-                    // Now that we have a selection, get the assignment details.
+                    // Get the assignment details.
                     let assignment = prompt(`Enter assignment details for the day:`);
                     if (assignment !== null) 
                     {
@@ -94,29 +97,31 @@ document.addEventListener('DOMContentLoaded', () =>
                         switch (selectedChoice) 
                         {
                             case "1":
-                                color = "ea9999";
+                                color = "#ea9999";
                                 break;
                             case "2":
                                 color = "#6fa8dc";
                                 break;
                             case "3":
-                                color = "8e7cc3";
+                                color = "#8e7cc3";
                                 break;
                             case "4":
-                                color = "f6b26b" 
+                                color = "#f6b26b" 
                                 break;
                             case "5":
-                                color = "b5651d"
+                                color = "#b5651d"
                                 break;
                             default:
                                 color = "black";
                         }
                     
+                        // Create an assignment element that will be inside the day cell
                         const assignmentElement = document.createElement('span');
                         dayCell.classList.add('assignment');
                         assignmentElement.style.color = color;
                         assignmentElement.textContent = assignment;
 
+                        // Append the assignment element into it's container so that the user can have multiple assignments on a single day
                         const assignmentContainer = dayCell.querySelector('.assignments')
                         assignmentContainer.appendChild(assignmentElement);
                         assignmentContainer.appendChild(document.createElement('br'));   
