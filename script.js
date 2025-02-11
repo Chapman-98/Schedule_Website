@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () =>
     const currentMonth = today.getMonth();  // 0 = January, ..., 11 = December
     const currentYear = today.getFullYear();
 
+    //Add a drag that will show the time as well so like going down it will show the time even if it is not on the side.
+
     // Get the first day of the month (0 = Sunday, 6 = Saturday)
     let firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
     firstDayOfMonth -= 1;
@@ -13,8 +15,7 @@ document.addEventListener('DOMContentLoaded', () =>
     if(firstDayOfMonth == -1)
     {
         firstDayOfMonth = 6;
-    }
-   
+    } 
     
 
     // Get the number of days in the month
@@ -22,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () =>
 
     // Define settings for the month view:
     let totalCells = 35;     // 7 days x 6 weeks grid (commonly used for calendars)
-   
+
     if((daysInMonth + (firstDayOfMonth + 1)) > totalCells)
     {
         totalCells = 42;
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () =>
     {
         const dayCell = document.createElement('div');
         dayCell.classList.add('day');
-  
+
         // Check if we have started the current month
         if(i >= firstDayOfMonth) 
         {
@@ -45,6 +46,17 @@ document.addEventListener('DOMContentLoaded', () =>
             else
             {            
                 dayNumber = i - firstDayOfMonth - daysInMonth + 1;
+            }
+
+            /* 
+                Easy way would to have a CSV file and keep using it and saving with it.
+                More efficient would be to save month at creation and simply keep reloading it 
+            */
+
+            // Set the background for todays date.
+            if(dayNumber == today.getDate())
+            {
+                dayCell.style.backgroundColor = "#f4cccc";
             }
 
             dayCell.dataset.day = dayNumber;
@@ -97,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () =>
                         switch (selectedChoice) 
                         {
                             case "1":
-                                color = "#ea9999";
+                                color = "#e0666";
                                 break;
                             case "2":
                                 color = "#6fa8dc";
@@ -133,5 +145,27 @@ document.addEventListener('DOMContentLoaded', () =>
         }
         calendar.appendChild(dayCell);
     }
+
+    const activitiesContainerGrid = document.getElementsByClassName("activities");
+
+    const activitiesContainer = activitiesContainerGrid[0];
+    let selectionBox = null;
+    let startX, startY;
+    let isDragging = false;
+
+    activitiesContainer.addEventListener("mousedown", (e) => 
+    {
+        isDragging = true;
+
+        console.log("Mouse Down Detected Inside .activities", e.clientX, e.clientY);
+
+    
+
+        // Create the selection div dynamically
+        selectionBox = document.createElement("div");
+        selectionBox.classList.add("selection-overlay");
+        selectionBox.style.left = e.clientX;
+        selectionBox.style.top = e.clientY
+        activitiesContainer.appendChild(selectionBox);
+    });
 });
-  

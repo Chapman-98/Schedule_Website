@@ -10,6 +10,7 @@
 /* Overall page style */
 body 
 {
+    display: flex;
     font-family: Arial, sans-serif;
     padding: 20px;
     background-color: #f4f4f4;
@@ -24,12 +25,13 @@ h1
 /* Container for the entire calendar */
 .calendar-container 
 {
+    flex: 1;
     position: relative;
     max-width: 700px;
     padding: 0px;
     background-color: #fff;
 }
-  
+
 /* Styling the day names row */
 .day-names 
 {
@@ -37,7 +39,7 @@ h1
     grid-template-columns: repeat(7, 1fr);
     margin-bottom: 5px;
 }
-  
+
 .day-names div 
 {
     background: #ddd;
@@ -82,4 +84,61 @@ h1
 .assignment
 {
     font-size: 0.9em;
+}
+
+.schedule-container
+{
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2,1fr);   
+    background: white;
+    vertical-align: middle;
+    margin-left: 20px;
+    max-height: 550px;
+}
+
+.time-slots 
+{
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    display: grid;
+    grid-template-columns: 100px;
+}
+
+/* Div is used so that each individual box has a border */
+.time-slots div
+{
+    border: 1px solid #ccc;
+    line-height: 28px;
+}
+
+.activities
+{
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    display: grid;
+    grid-template-columns: 100px;
+    cursor: pointer;
+}
+
+.activities div
+{
+    border: 1px solid #ccc;
+    text-align: center;
+    min-height: 30px;
+}
+
+/* Use JS to create a new div inside schedule container. Have a click and drag option and then choose your course after you are done. And then ask what the assignment is.*/
+
+.selection-overlay 
+{
+    position: absolute;
+    width: 100px;
+    offset-position: "middle";
+    background-color:rgba(0, 0, 0, 0.85);
+    color:white;
+    cursor: move;
+    resize: vertical;
 }
