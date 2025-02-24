@@ -132,13 +132,12 @@ h1
 
 /* Use JS to create a new div inside schedule container. Have a click and drag option and then choose your course after you are done. And then ask what the assignment is.*/
 
-.selection-overlay 
+.overlay 
 {
     position: absolute;
     width: 100px;
-    offset-position: "middle";
-    background-color:rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 255, 0.3);
+    border: 2px solid blue;
     color:white;
-    cursor: move;
-    resize: vertical;
+    cursor: pointer;
 }

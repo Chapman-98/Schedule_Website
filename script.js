@@ -146,26 +146,130 @@ document.addEventListener('DOMContentLoaded', () =>
         calendar.appendChild(dayCell);
     }
 
-    const activitiesContainerGrid = document.getElementsByClassName("activities");
+    const activities = document.querySelector('.activities');
 
-    const activitiesContainer = activitiesContainerGrid[0];
-    let selectionBox = null;
-    let startX, startY;
-    let isDragging = false;
+    // --- Variables for drawing a new overlay ---
+    let isDrawing = false;
+    let drawStartX = 0;
+    let drawStartY = 0;
+    let currentDrawingOverlay = null;
+    
+    // Global variables for dragging and resizing
+    let currentDragOverlay = null;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+    
+    let currentResizeOverlay = null;
+    let resizeStartWidth = 0;
+    let resizeStartHeight = 0;
+    let resizeStartX = 0;
+    let resizeStartY = 0;
 
-    activitiesContainer.addEventListener("mousedown", (e) => 
+    // Create an overlay when clicking directly on the activities container.
+    activities.addEventListener('mousedown', function(e) 
     {
-        isDragging = true;
+        console.log("Mousedown fired");
 
-        console.log("Mouse Down Detected Inside .activities", e.clientX, e.clientY);
+        // Ensure the click is not on an existing overlay or its children.
+        if(e.currentTarget !== activities) return;
+        
 
+        
+        // Determine click position relative to the activities container.
+        const rect = activities.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Create the overlay element.
+        const overlay = document.createElement('div');
+        overlay.classList.add('overlay');
+        //overlay.style.left = x + 'px';
+        overlay.style.top = y + 'px';
+        //overlay.style.width = '100px';  // Default width
+        //overlay.style.height = '50px';  // Default height
+    
+        // Create a resize handle and add it to the overlay.
+        const handle = document.createElement('div');
+        overlay.appendChild(handle);
+    
+        // Append the overlay to the activities container.
+        activities.appendChild(overlay);
+    
+    
+        // --- DRAGGING FUNCTIONALITY ---
+        // When the mouse is pressed on the overlay (but not on the resize handle), start dragging.
+        overlay.addEventListener('mousedown', function(ev) 
+        {
+            // If the user clicks on the resize handle, ignore this mousedown.
+            if (ev.target.classList.contains('resize-handle')) return;
+            currentDragOverlay = overlay;
+            const overlayRect = overlay.getBoundingClientRect();
+            dragOffsetX = ev.clientX - overlayRect.left;
+            dragOffsetY = ev.clientY - overlayRect.top;
+            ev.preventDefault();
+        });
+    
+        // --- RESIZING FUNCTIONALITY ---
+        // When the mouse is pressed on the resize handle, start resizing.
+        handle.addEventListener('mousedown', function(ev) 
+        {
+            currentResizeOverlay = overlay;
+            resizeStartWidth = overlay.offsetWidth;
+            resizeStartHeight = overlay.offsetHeight;
+            resizeStartX = ev.clientX;
+            resizeStartY = ev.clientY;
+            // Prevent the drag handler from also firing.
+            ev.stopPropagation();
+            ev.preventDefault();
+        });
+    
     
 
-        // Create the selection div dynamically
-        selectionBox = document.createElement("div");
-        selectionBox.classList.add("selection-overlay");
-        selectionBox.style.left = e.clientX;
-        selectionBox.style.top = e.clientY
-        activitiesContainer.appendChild(selectionBox);
+        // Global mousemove handler for dragging and resizing.
+        document.addEventListener('mousemove', function(e) 
+        {
+            // Handle dragging
+            if (currentDragOverlay) 
+            {
+                const activitiesRect = activities.getBoundingClientRect();
+                let newLeft = e.clientX - activitiesRect.left - dragOffsetX;
+                let newTop = e.clientY - activitiesRect.top - dragOffsetY;
+                
+                // Optional: Clamp to keep the overlay within the container.
+                newLeft = Math.max(newLeft, 0);
+                newTop = Math.max(newTop, 0);
+                newLeft = Math.min(newLeft, activities.clientWidth - currentDragOverlay.offsetWidth);
+                newTop = Math.min(newTop, activities.clientHeight - currentDragOverlay.offsetHeight);
+                
+                currentDragOverlay.style.left = newLeft + 'px';
+                currentDragOverlay.style.top = newTop + 'px';
+            }
+            
+            // Handle resizing
+            if (currentResizeOverlay) 
+            {
+                let newWidth = resizeStartWidth + (e.clientX - resizeStartX);
+                let newHeight = resizeStartHeight + (e.clientY - resizeStartY);
+                // Set minimum dimensions
+                newWidth = Math.max(newWidth, 50);
+                newHeight = Math.max(newHeight, 30);
+                
+                // Optional: Clamp the overlay size so it doesn't extend outside the container.
+                const overlayLeft = parseInt(currentResizeOverlay.style.left, 10);
+                const overlayTop = parseInt(currentResizeOverlay.style.top, 10);
+                newWidth = Math.min(newWidth, activities.clientWidth - overlayLeft);
+                newHeight = Math.min(newHeight, activities.clientHeight - overlayTop);
+                
+                currentResizeOverlay.style.width = newWidth + 'px';
+                currentResizeOverlay.style.height = newHeight + 'px';
+            }
+        });
+    });
+    
+    // Global mouseup handler to stop dragging/resizing.
+    document.addEventListener('mouseup', function(e) 
+    {
+        currentDragOverlay = null;
+        currentResizeOverlay = null;
     });
 });
