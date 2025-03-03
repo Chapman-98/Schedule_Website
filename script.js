@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () =>
         firstDayOfMonth = 6;
     } 
     
+    // Will be used to make sure that the block for next month that contains the same date is not highlighted too
+    let currentDateSeen = false; 
 
     // Get the number of days in the month
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -54,8 +56,9 @@ document.addEventListener('DOMContentLoaded', () =>
             */
 
             // Set the background for todays date.
-            if(dayNumber == today.getDate())
+            if(dayNumber == today.getDate() && !currentDateSeen)
             {
+                currentDateSeen = true;
                 dayCell.style.backgroundColor = "#f4cccc";
             }
 
