@@ -1,5 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => 
 {
+    calendar();
+});
+
+async function calendar() 
+{
+    // Fetch the current data in the database
+    const assignments = await fetchData();
+
     const calendar = document.getElementById('calendar');    
     const today = new Date();
     const currentMonth = today.getMonth();  // 0 = January, ..., 11 = December
@@ -36,7 +44,9 @@ document.addEventListener('DOMContentLoaded', () =>
         totalCells = 42;
     }
 
+    
     let dayNumber = 0;
+    let daysAssignment;
     for(let i = 0; i < totalCells; i++) 
     {
         const dayCell = document.createElement('div');
@@ -46,15 +56,21 @@ document.addEventListener('DOMContentLoaded', () =>
         if(i < firstDayOfMonth)
         {
             dayNumber = daysLastMonth - firstDayOfMonth + i + 1;
+            dayCell.dataset.month = currentMonth - 1;
         }
         // Fill in the cells that represent actual days of the month.
         else if(i < firstDayOfMonth + daysInMonth)
         {
             dayNumber = i - firstDayOfMonth + 1;
+            dayCell.dataset.month = currentMonth;
+            daysAssignment = assignments.find(({day}) => day === dayNumber);
+            console.log(daysAssignment);
         }
+        // Fill in the cells that represent days of next month.
         else
         {            
             dayNumber = i - firstDayOfMonth - daysInMonth + 1;
+            dayCell.dataset.month = currentMonth + 1;
         }
 
         /* 
@@ -77,6 +93,20 @@ document.addEventListener('DOMContentLoaded', () =>
         const assignmentContainer = document.createElement('div');
         assignmentContainer.classList.add('assignments');
         dayCell.appendChild(assignmentContainer);
+
+
+        if(daysAssignment)
+        {
+            // Create an assignment element that will be inside the day cell
+            const assignmentElement = document.createElement('span');
+            assignmentElement.style.color = daysAssignment.style;
+            assignmentElement.textContent = daysAssignment.assignmentName;
+
+            // Append the assignment element into it's container so that the user can have multiple assignments on a single day
+            const assignmentContainer = dayCell.querySelector('.assignments')
+            assignmentContainer.appendChild(assignmentElement);
+            assignmentContainer.appendChild(document.createElement('br'));   
+        }
 
         // Add click event to allow assignment input.
         dayCell.addEventListener('click', () => 
@@ -112,8 +142,8 @@ document.addEventListener('DOMContentLoaded', () =>
                 const selectedChoice = selectedInput.value;
                 
                 // Get the assignment details.
-                let assignment = prompt(`Enter assignment details for the day:`);
-                if (assignment !== null) 
+                let assignmentName = prompt(`Enter assignment details for the day:`);
+                if (assignmentName !== null) 
                 {
                     // Map the selectedChoice to a color
                     let color;
@@ -142,12 +172,42 @@ document.addEventListener('DOMContentLoaded', () =>
                     const assignmentElement = document.createElement('span');
                     dayCell.classList.add('assignment');
                     assignmentElement.style.color = color;
-                    assignmentElement.textContent = assignment;
+                    assignmentElement.textContent = assignmentName;
 
                     // Append the assignment element into it's container so that the user can have multiple assignments on a single day
                     const assignmentContainer = dayCell.querySelector('.assignments')
                     assignmentContainer.appendChild(assignmentElement);
                     assignmentContainer.appendChild(document.createElement('br'));   
+
+                    assignmentObject =
+                    {
+                        month: dayCell.getAttribute("data-month"), 
+                        day: dayCell.getAttribute("data-day"), 
+                        style: color, 
+                        assignmentName: assignmentName
+                    };
+                    
+                    fetch('http://localhost:3000/data', 
+                    {
+                        method: 'POST',
+                        headers: 
+                        {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(assignmentObject)
+                    })
+                    .then(response => response.json())
+                    .then(data => 
+                    {
+                        console.log('POST response:', data);
+                        // Process the response, e.g., update the UI or confirm receipt
+                    })
+                    .catch(error => 
+                    {
+                        console.error('Error sending data:', error);
+                    });
+
+                    console.log(assignmentObject);
                 }
                 // Remove the custom prompt from the document.
                 promptDiv.remove();
@@ -282,4 +342,21 @@ document.addEventListener('DOMContentLoaded', () =>
         currentDragOverlay = null;
         currentResizeOverlay = null;
     });
-});
+}
+    
+async function fetchData() 
+{
+    try 
+    {
+        const response = await fetch('http://localhost:3000/data');
+        const data = await response.json();
+        console.log('GET response:', data);
+        return data.data; 
+    } 
+    catch(error) 
+    {
+        console.error('Error fetching data:', error);
+        throw error; // Optionally re-throw the error
+    }
+}
+    
