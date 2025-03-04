@@ -13,20 +13,22 @@ app.use(express.json());
 
 mongoose.connect('mongodb://localhost:27017/schedule_assignments');
   
-  const assignmentSchema = new mongoose.Schema(
-  {
-    month: Number,
-    day: Number,
-    style: String,
-    assignmentName: String
-  });
+const assignmentSchema = new mongoose.Schema(
+{
+  month: Number,
+  day: Number,
+  style: String,
+  assignmentName: String
+});
   
 const Assignment = mongoose.model('Assignment', assignmentSchema);
 
-app.get('/', (req, res) =>
+app.use(express.static('frontend'));
+
+/*app.get('/', (req, res) =>
 {
-  res.sendFile(`${__dirname}\\index.html`);
-});
+  res.sendFile('../index1.html', {root: __dirname});
+});*/
 
 app.get('/data', async (req, res) => 
 {
