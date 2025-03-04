@@ -23,6 +23,10 @@ mongoose.connect('mongodb://localhost:27017/schedule_assignments');
   
 const Assignment = mongoose.model('Assignment', assignmentSchema);
 
+app.get('/', (req, res) =>
+{
+  res.sendFile(`${__dirname}\\index.html`);
+});
 
 app.get('/data', async (req, res) => 
 {

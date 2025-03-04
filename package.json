@@ -1,0 +1,27 @@
+{
+  "name": "schedule_website",
+  "version": "1.0.0",
+  "description": "This is a website that will have a dynamic calendar that will highlight the current day and let users add their own text to the boxes. It will also have a current day tab that users can populate and it will have a red line that shows the current time.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node calendar-backend server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chapman-98/Schedule_Website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Chapman-98/Schedule_Website/issues"
+  },
+  "homepage": "https://github.com/Chapman-98/Schedule_Website#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mongodb": "^6.14.1",
+    "mongoose": "^8.12.0"
+  }
+}
