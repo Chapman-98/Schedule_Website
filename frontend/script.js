@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => 
 {
+    console.log("found");
     calendar();
 });
 
@@ -109,8 +110,36 @@ async function calendar()
         }
 
         // Add click event to allow assignment input.
-        dayCell.addEventListener('click', () => 
+        dayCell.addEventListener('click', async () => 
         {
+            // To tell if password is incorrect
+            let incorrect = 0;
+
+            await (async () =>
+            {
+                const password = await askForPassword();
+                const correct = await checkPassword(password);
+
+                if(!correct)
+                {
+                    console.log("Password incorrect");
+                    // Create a div for the prompt
+                    const promptDiv = document.createElement('div');
+                    promptDiv.classList.add('incorrect-password');
+
+                    promptDiv.innerHTML = `
+                    <div style="background:#eee; padding:10px; border:1px solid #ccc; position:fixed; top:30%; left:50%; transform:translate(-50%, -50%);">
+                        <p>Incorrect Password</p>
+                    </div>`;
+
+                    // Append the prompt to the document body
+                    document.body.appendChild(promptDiv);  
+                    incorrect = 1;
+                }
+            })();
+
+            if(incorrect == 1) {return;}
+
             // Create a div for the prompt
             const promptDiv = document.createElement('div');
             promptDiv.classList.add('custom-prompt');
@@ -127,7 +156,8 @@ async function calendar()
                 </div>`;
 
             // Append the prompt to the document body
-            document.body.appendChild(promptDiv);
+            document.body.appendChild(promptDiv);  
+
 
             // Check when confirm has been selected
             promptDiv.querySelector('#confirmSelection').addEventListener('click', () => 
@@ -187,7 +217,7 @@ async function calendar()
                         assignmentName: assignmentName
                     };
                     
-                    fetch('http://localhost:3000/data', 
+                    fetch('/data', 
                     {
                         method: 'POST',
                         headers: 
@@ -348,7 +378,7 @@ async function fetchData()
 {
     try 
     {
-        const response = await fetch('http://localhost:3000/data');
+        const response = await fetch('/data');
         const data = await response.json();
         console.log('GET response:', data);
         return data.data; 
@@ -359,4 +389,66 @@ async function fetchData()
         throw error; // Optionally re-throw the error
     }
 }
-    
+
+async function checkPassword(password)
+{
+    passwordObject =
+    {
+        password: password
+    }
+    console.log(passwordObject.password);
+    try 
+    {
+        const response = await fetch('/password',
+        {
+            method: 'POST',
+            headers: 
+            {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(passwordObject)
+        });
+
+        const data = await response.json();
+        console.log('GET response:', data);
+        return data.data; 
+    } 
+    catch(error) 
+    {
+        console.error('Error fetching data:', error);
+        throw error; // Optionally re-throw the error
+    }
+}
+
+async function askForPassword()
+{
+    return new Promise(resolve => 
+    {
+        const promptDiv = document.createElement('div');
+        promptDiv.classList.add('custom-prompt');
+
+        promptDiv.innerHTML = `
+            <div style="background:#eee; padding:20px; border:1px solid #ccc; position:fixed; top:30%; left:50%; transform:translate(-50%, -50%); z-index:1000; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                <p>Enter the password to make an edit:</p>
+                <input type="password" id="passwordInput" required><br><br>
+                <button id="confirmSelection">Confirm</button>
+                <button id="cancelSelection">Cancel</button>
+            </div>`;
+
+        // Append the prompt to the document body
+        document.body.appendChild(promptDiv);
+
+        document.getElementById('confirmSelection').onclick = () => 
+        {
+            const password = document.getElementById('passwordInput').value;
+            promptDiv.remove(); 
+            resolve(password);
+        };
+
+        document.getElementById('cancelSelection').onclick = () => {
+            promptDiv.remove();
+            resolve(null); 
+        };
+    });
+}
+

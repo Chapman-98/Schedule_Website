@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const password = process.env.PASSWORD || "password";
 
 app.use(cors());
 
@@ -12,7 +13,8 @@ app.use(express.json());
 
 
 mongoose.connect('mongodb://localhost:27017/schedule_assignments');
-  
+
+
 const assignmentSchema = new mongoose.Schema(
 {
   month: Number,
@@ -24,11 +26,6 @@ const assignmentSchema = new mongoose.Schema(
 const Assignment = mongoose.model('Assignment', assignmentSchema);
 
 app.use(express.static('frontend'));
-
-/*app.get('/', (req, res) =>
-{
-  res.sendFile('../index1.html', {root: __dirname});
-});*/
 
 app.get('/data', async (req, res) => 
 {
@@ -43,6 +40,21 @@ app.get('/data', async (req, res) =>
   }
 });
 
+
+app.post('/password', (req, res) => 
+{
+  const receivedData = req.body;
+  console.log('Received POST data:', receivedData);
+
+  if(receivedData.password === password)
+  {
+    res.json({message: 'Password Correct', data: true});   
+  }
+  else
+  {
+    res.json({message: 'Password Incorrect', data: false, entered: receivedData.password});    
+  } 
+});
 
 app.post('/data', (req, res) => 
 {
